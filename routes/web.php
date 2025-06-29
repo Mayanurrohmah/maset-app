@@ -1,43 +1,52 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\discover;
+use App\Http\Controllers\DiscoverController;
+use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth; // ✅ Tambahkan ini untuk Auth
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route redirect setelah login: user → dashboard, admin → admin dashboard
+Route::get('/redirect', function () {
+    $user = Auth::user();
 
-Route::get('/dashboard', function () {
+    if ($user->role === 'admin') {
+        return redirect()->route('admin.dashboard');
+    }
+
+    return redirect()->route('dashboard');
+})->middleware(['auth']);
+
+// Dashboard user biasa
+Route::get('/', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// Admin dashboard
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+});
+
+// Profile routes
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/diet-selection', function () {
+// Diet selection
+Route::get('/diet', function () {
     return view('diet-selection');
 });
 
-Route::get('/discover', function () {
-    return view('discover.index');
-});
+// Discover
+Route::get('/discover', [DiscoverController::class, 'index'])->name('discover');
 
-
-// Route::get('/discover', [Discover::class, 'index'])->name('discover');
-
+// Auth routes
 require __DIR__.'/auth.php';

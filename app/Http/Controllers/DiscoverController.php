@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\discover;
+use App\Models\DiscoverModel;
 use Illuminate\Http\Request;
 
-
-class discover extends Controller
+class DiscoverController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -35,7 +34,7 @@ class discover extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(discover $discover)
+    public function show(DiscoverModel $discoverModel)
     {
         //
     }
@@ -43,7 +42,7 @@ class discover extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(discover $discover)
+    public function edit(DiscoverModel $discoverModel)
     {
         //
     }
@@ -51,7 +50,7 @@ class discover extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, discover $discover)
+    public function update(Request $request, DiscoverModel $discoverModel)
     {
         //
     }
@@ -59,7 +58,7 @@ class discover extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(discover $discover)
+    public function destroy(DiscoverModel $discoverModel)
     {
         //
     }
