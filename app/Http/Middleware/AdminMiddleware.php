@@ -14,6 +14,6 @@ class AdminMiddleware
             return $next($request);
         }
 
-        return redirect('/'); // arahkan ke homepage jika bukan admin
+        return redirect('/admin/dashboard'); // arahkan ke homepage jika bukan admin
     }
 }
