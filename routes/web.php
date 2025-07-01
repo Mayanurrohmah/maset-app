@@ -25,7 +25,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/rekomendasiMakanan', [MakananController::class, 'index'])->name('makanan.rekomendasi_makanan');
+    Route::get('/dashboard', [MakananController::class, 'index'])->name('makanan.dashboard');
+});
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/rekomendasiMakanan', [MakananController::class, 'rekomendasiMakanan'])->name('makanan.rekomendasi_makanan');
 });
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/detailMakanan', [MakananController::class, 'show'])->name('makanan.detail_makanan');

@@ -14,6 +14,11 @@
                      <span>Hallo {{ auth()->user()->name }}</span>
              </div>
 
+             <a href="{{ route('makanan.dashboard') }}" class="flex items-center gap-2 hover:underline">
+                 <img src="https://img.icons8.com/ios-filled/24/restaurant.png" class="w-6 h-6" />
+                 <span>Home</span>
+             </a>
+
              <!-- Menu khusus Admin -->
              @if (auth()->user()->role === 'admin')
              <a href="{{ route('makanan.kelola_makanan') }}" class="flex items-center gap-2 hover:underline">
