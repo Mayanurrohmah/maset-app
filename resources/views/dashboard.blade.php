@@ -1,42 +1,55 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Dashboard') }}
+            {{ __('dashboard') }}
         </h2>
     </x-slot>
 
- <div class="max-w-4xl mx-auto p-6">
-        <h1 class="text-2xl font-bold mb-4">What do you like to eat?</h1>
-        <p class="text-gray-600 mb-6">Choose from a primary diet type. You can exclude specific foods in the next step.</p>
+    <div class="max-w-4xl mx-auto p-10 bg-white rounded">
+        <h1 class="text-3xl font-bold mb-4">Hallo {{ Auth::user()->name }} !</h1>
+        <p class="text-lg text-gray-800 mb-8">
+            Sebelum kamu memilih makanan, yuk pahami dulu jenis-jenis diet berikut.
+        </p>
 
-        <form action="#" method="POST">
-            @csrf
-
-            <div class="space-y-4">
-                @php
-                    $options = [
-                        ['label' => 'Anything', 'excludes' => 'Nothing'],
-                        ['label' => 'Keto', 'excludes' => 'High-carb Grains, Refined Starches, Sugar'],
-                        ['label' => 'Paleo', 'excludes' => 'Dairy, Grains, Legumes, Refined Starches, Soy, Sugar'],
-                        ['label' => 'Vegan', 'excludes' => 'Red Meat, Poultry, Fish, Shellfish, Dairy, Eggs, Mayo, Honey'],
-                        ['label' => 'Vegetarian', 'excludes' => 'Red Meat, Poultry, Fish, Shellfish']
-                    ];
-                @endphp
-
-                @foreach ($options as $index => $option)
-                <label class="flex items-start p-4 border rounded-lg hover:bg-gray-50 cursor-pointer">
-                    <input type="radio" name="diet" value="{{ $option['label'] }}" class="mt-1 mr-4">
-                    <div>
-                        <p class="font-semibold">{{ $option['label'] }}</p>
-                        <p class="text-sm text-gray-500">Excludes: {{ $option['excludes'] }}</p>
-                    </div>
-                </label>
-                @endforeach
+        <div class="space-y-6 text-black">
+            <div class="flex items-start gap-4">
+                <img src="https://img.icons8.com/color/48/cookie.png" class="w-10 h-10" />
+                <div>
+                    <p class="font-bold">Bebas/Anything</p>
+                    <p class="text-sm">Tidak ada pantangan makanan</p>
+                </div>
             </div>
 
-            <div class="mt-6 flex justify-between items-center">
-                <button type="submit" class="bg-orange-500 text-white px-5 py-2 rounded hover:bg-orange-600">Continue</button>
+            <div class="flex items-start gap-4">
+                <img src="https://img.icons8.com/color/48/milk-bottle.png" class="w-10 h-10" />
+                <div>
+                    <p class="font-bold">Keto</p>
+                    <p class="text-sm">Menghindari karbohidrat tinggi, tepung olahan, dan gula</p>
+                </div>
             </div>
-        </form>
+
+            <div class="flex items-start gap-4">
+                <img src="https://img.icons8.com/color/48/salad.png" class="w-10 h-10" />
+                <div>
+                    <p class="font-bold">Vegetarian</p>
+                    <p class="text-sm">Tidak mengonsumsi daging, unggas, atau ikan</p>
+                </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+                <img src="https://img.icons8.com/color/48/broccoli.png" class="w-10 h-10" />
+                <div>
+                    <p class="font-bold">Vegan</p>
+                    <p class="text-sm">Tidak mengonsumsi produk hewani termasuk susu dan telur</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-12 text-right">
+            <a href="{{ route('makanan.rekomendasi_makanan', ['showModal' => 'true']) }}"
+                class="inline-flex items-center bg-lime-500 text-black font-semibold px-6 py-3 rounded-full hover:bg-lime-600 transition">                
+                Mulai Rekomendasi
+            </a>
+        </div>
     </div>
 </x-app-layout>

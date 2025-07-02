@@ -11,8 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('makanans', function (Blueprint $table) {
+        Schema::create('makanan', function (Blueprint $table) {
             $table->id();
+            $table->string('nama_makanan');
+            $table->string('gambar')->nullable();
+            $table->float('kalori')->nullable();
+            $table->float('karbohidrat')->nullable();
+            $table->float('protein')->nullable();
+            $table->integer('harga')->nullable();
+            $table->string('level_harga')->nullable();
+            $table->string('tipe_diet')->nullable();
+            $table->integer('cluster')->nullable();
             $table->timestamps();
         });
     }
@@ -22,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('makanans');
+        Schema::dropIfExists('makanan');
     }
 };
