@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('makanan', function (Blueprint $table) {
             $table->id();
             $table->string('nama_makanan');
-            $table->string('gambar')->nullable();
+            $table->text('gambar')->nullable();
             $table->float('kalori')->nullable();
             $table->float('karbohidrat')->nullable();
             $table->float('protein')->nullable();
