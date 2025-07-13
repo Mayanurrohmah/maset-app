@@ -110,7 +110,7 @@
         </div>
 
         <div class="mt-6 text-right">
-            <a href="{{ route('dashboard') }}" class="inline-flex items-center bg-lime-500 hover:bg-lime-600 text-white px-4 py-2 rounded-full">
+            <a href="{{ route('makanan.dashboard') }}" class="inline-flex items-center bg-lime-500 hover:bg-lime-600 text-white px-4 py-2 rounded-full">
                 ✅ Selesai
             </a>
         </div>

@@ -4,9 +4,10 @@
         <h1 class="text-2xl font-bold mb-6 text-gray-800">Edit Data Makanan</h1>
         
         {{-- Arahkan form ke route update dengan method PUT --}}
-        <form action="{{ route('makanan.update', $makanan->id) }}" method="POST">
+        <form action="{{ route('makanan.update', $makanan) }}" method="POST">
             @csrf
-            
+            <!-- @method('PUT') -->
+        
 
             {{-- 
               Container Grid untuk tata letak 2 kolom.

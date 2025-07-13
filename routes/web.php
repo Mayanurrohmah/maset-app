@@ -16,9 +16,11 @@ use Illuminate\Http\Request;
 */
 
 // Default home (bisa digunakan oleh user biasa)
-Route::get('/', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Route::get('/', function () {
+//     return view('dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
+
+route::get('/', [LandingController::class, 'index'])->name('landing.index');
 
 // Admin dashboard (khusus admin)
 Route::middleware(['auth', 'admin'])->group(function () {
@@ -27,7 +29,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/addMakanan', [MakananController::class, 'create'])->name('makanan.create');
     Route::post('/addMakanan', [MakananController::class, 'store'])->name('makanan.store');
     Route::get('/makanan/{makanan}/edit', [MakananController::class, 'edit'])->name('makanan.edit');
-    Route::post('/makanan/{makanan}/update', [MakananController::class, 'update'])->name('makanan.update');
+    Route::put('/makanan/{makanan}/update', [MakananController::class, 'update'])->name('makanan.update');
     Route::delete('/makanan/{makanan}', [MakananController::class, 'destroy'])->name('makanan.destroy');
     Route::get('/aktivitas', [AdminController::class, 'userActivities'])->name('auth.user_activity');
     Route::get('/makanan/import', [MakananController::class, 'showImportForm'])->name('makanan.import');

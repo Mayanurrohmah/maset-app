@@ -150,7 +150,7 @@
 
   <div class="container">
     <div class="left">
-      <img src="{{ asset('img/login1.png') }}" alt="Ilustrasi" />
+      <img src="{{ asset('img/login.png') }}" alt="Ilustrasi" />
       <p style="font-size: 16px; text-align: center; font-weight: 500;">
         Smart Food Recommendations<br />Fit Your Life
       </p>

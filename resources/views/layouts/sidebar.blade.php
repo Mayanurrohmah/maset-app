@@ -22,7 +22,7 @@
 
             <div class="pt-6 mt-6 border-t border-gray-200 space-y-3">
                 <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider pl-3 mb-2">Menu</h3>
-                <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-lime-50 hover:text-lime-700 transition duration-200 {{ request()->routeIs('makanan.dashboard') ? 'bg-lime-100 text-lime-700 font-semibold' : '' }}">
+                <a href="{{ route('makanan.dashboard') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-lime-50 hover:text-lime-700 transition duration-200 {{ request()->routeIs('makanan.dashboard') ? 'bg-lime-100 text-lime-700 font-semibold' : '' }}">
                     <i class="fas fa-chart-pie w-6 h-6 text-xl"></i>
                     <span class="text-lg">Dashboard</span>
                 </a>
@@ -30,6 +30,10 @@
                 <a href="{{ route('makanan.rekomendasi_makanan') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-lime-50 hover:text-lime-700 transition duration-200 {{ request()->routeIs('makanan.rekomendasi_makanan') ? 'bg-lime-100 text-lime-700 font-semibold' : '' }}">
                     <i class="fas fa-utensils w-6 h-6 text-xl"></i>
                     <span class="text-lg">Daftar Makanan</span>
+                </a>
+                <a href="{{ route('makanan.favorit') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-lime-50 hover:text-lime-700 transition duration-200 {{ request()->routeIs('makanan.rekomendasi_makanan') ? 'bg-lime-100 text-lime-700 font-semibold' : '' }}">
+                    <i class="fas fa-utensils w-6 h-6 text-xl"></i>
+                    <span class="text-lg">Makanan Favorit</span>
                 </a>
             </div>
 
