@@ -76,7 +76,7 @@
                             <select id="diet" name="diet"
                                 class="bg-transparent border-none text-lime-800 focus:ring-0 w-full text-lg" required>
                                 <option value="">-- Pilih Jenis Diet --</option>
-                                <option value="Anything">Normal</option>
+                                <option value="Normal">Normal</option>
                                 <option value="Keto">Keto</option>
                                 <option value="Vegetarian">Vegetarian</option>
                                 <option value="Vegan">Vegan</option>

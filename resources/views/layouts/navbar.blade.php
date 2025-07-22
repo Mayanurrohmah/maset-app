@@ -6,7 +6,7 @@
         </div>
 
         <div class="flex items-center space-x-5 text-gray-700 text-xl">
-            <a href="{{ route('dashboard') }}" title="Beranda" class="hover:text-lime-600 transition">
+            <a href="{{ route('makanan.dashboard') }}" title="Beranda" class="hover:text-lime-600 transition">
                 <i class="fas fa-home"></i>
             </a>
 

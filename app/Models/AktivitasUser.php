@@ -12,7 +12,11 @@ class AktivitasUser extends Model
     
     public $timestamps = false;
 
-    protected $fillable = ['user_id', 'aksi'];
+    protected $fillable = ['user_id', 'aksi', 'created_at'];
+
+     protected $casts = [
+        'created_at' => 'datetime', // ✅ Ini penting agar bisa pakai ->translatedFormat()
+    ];
 
     public function user()
     {

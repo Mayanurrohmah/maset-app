@@ -31,7 +31,6 @@
                         <th class="border border-black px-2 py-1">Gambar</th>
                         <th class="border border-black px-2 py-1">Kalori</th>
                         <th class="border border-black px-2 py-1">Karbohidrat</th>
-                        <th class="border border-black px-2 py-1">Lemak</th>
                         <th class="border border-black px-2 py-1">Protein</th>
                         <th class="border border-black px-2 py-1">Harga</th>
                         <th class="border border-black px-2 py-1">Tipe Diet</th>
@@ -48,7 +47,6 @@
                         </td>
                         <td class="border border-black px-2 py-1">{{ $makanan->kalori }}</td>
                         <td class="border border-black px-2 py-1">{{ $makanan->karbohidrat }}</td>
-                        <td class="border border-black px-2 py-1">{{ $makanan->lemak }}</td>
                         <td class="border border-black px-2 py-1">{{ $makanan->protein }}</td>
                         <td class="border border-black px-2 py-1">Rp. {{ number_format($makanan->harga, 0, ',', '.') }}</td>
                         <td class="border border-black px-2 py-1">{{ $makanan->tipe_diet }}</td>
@@ -56,11 +54,12 @@
                             <a href="{{ route('makanan.edit', $makanan) }}" class="text-yellow-500 mr-2" title="Edit">
                                 ✏️
                             </a>
-                            <form action="{{ route('makanan.destroy', $makanan) }}" method="POST" class="inline" onsubmit="return confirm('Yakin hapus?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-500" title="Hapus">🗑️</button>
-                            </form>
+                            <form action="{{ route('makanan.destroy', $makanan->id) }}" method="POST" class="inline" onsubmit="return confirm('Yakin hapus?')">
+                                 @csrf
+                                  @method('DELETE')
+                                  <button type="submit" class="text-red-500" title="Hapus">🗑️</button>
+                                </form>
+
                         </td>
                     </tr>
                     @endforeach
@@ -73,7 +72,7 @@
         </div>
         
         <div class="mt-6 text-right">
-            <a href="{{ route('dashboard') }}" class="inline-flex items-center bg-lime-500 hover:bg-lime-600 text-white px-4 py-2 rounded-full">
+            <a href="{{ route('makanan.dashboard') }}" class="inline-flex items-center bg-lime-500 hover:bg-lime-600 text-white px-4 py-2 rounded-full">
                 ✅ Selesai
             </a>
         </div>

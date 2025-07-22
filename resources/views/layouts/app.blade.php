@@ -17,6 +17,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         #sidebar,
         #main-content {
@@ -45,9 +48,20 @@
 <body class="min-h-screen font-sans bg-gradient-to-br from-lime-100 via-emerald-100 to-lime-200 bg-fixed bg-no-repeat bg-cover">
     @auth
         @if(auth()->user()->role === 'admin')
-            <div class="min-h-screen flex">
+            <!-- Hamburger Icon (mobile only) -->
+            <div class="md:hidden fixed top-4 left-4 z-50">
+                <button id="hamburger-toggle" class="text-gray-800 bg-white shadow p-2 rounded-full focus:outline-none">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Overlay -->
+            <div id="sidebar-overlay" class="fixed inset-0 bg-black opacity-50 z-40 hidden md:hidden"></div>
+
+            <div class="min-h-screen flex relative">
                 @include('layouts.sidebar')
-                <div id="main-content" class="flex-1 ml-64 p-6">
+
+                <div id="main-content" class="flex-1 md:ml-64 p-6">
                     {{ $slot }}
                 </div>
             </div>
@@ -74,6 +88,31 @@
             const adminDropdownBtn = document.getElementById('admin-dropdown-btn');
             const adminDropdown = document.getElementById('admin-dropdown');
             const adminChevron = document.getElementById('admin-chevron');
+
+            const mobileToggle = document.getElementById('hamburger-toggle');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            const sidebarClose = document.getElementById('hamburger-btn-sidebar');
+
+            if (mobileToggle && sidebar && sidebarOverlay) {
+                mobileToggle.addEventListener('click', () => {
+                    sidebar.classList.remove('-translate-x-full');
+                    sidebarOverlay.classList.remove('hidden');
+                });
+            }
+
+            if (sidebarClose && sidebar && sidebarOverlay) {
+                sidebarClose.addEventListener('click', () => {
+                    sidebar.classList.add('-translate-x-full');
+                    sidebarOverlay.classList.add('hidden');
+                });
+            }
+
+            if (sidebarOverlay && sidebar) {
+                sidebarOverlay.addEventListener('click', () => {
+                    sidebar.classList.add('-translate-x-full');
+                    sidebarOverlay.classList.add('hidden');
+                });
+            }
 
             if (hamburgerBtn && sidebar && mainContent) {
                 hamburgerBtn.addEventListener('click', () => {
@@ -113,6 +152,8 @@
             }
         });
     </script>
-</body>
 
+    <!-- Tempat grafik/chart akan ditampilkan -->
+    @stack('scripts')
+</body>
 </html>

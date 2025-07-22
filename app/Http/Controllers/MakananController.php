@@ -10,36 +10,24 @@ use Illuminate\Support\Facades\Auth;
 
 class MakananController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         AktivitasHelper::catat('Melihat halaman dashboard rekomendasi makanan');
-        return view('makanan.index'); // Assuming you have a view for listing Makanan
-
+        return view('makanan.index');
     }
 
     public function kelolaMakanan()
     {
         AktivitasHelper::catat('Melihat halaman kelola makanan');
-        // Logic to handle the listing of Makanan
-        // return view('makanan.kelola_makanan'); // Assuming you have a view for listing Makanan
         $makanans = MakananModel::latest()->paginate(10);
         return view('makanan.kelola_makanan', compact('makanans'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('makanan.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -52,30 +40,22 @@ class MakananController extends Controller
         return redirect()->route('makanan.index')->with('success', 'Makanan berhasil ditambahkan.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
-        // AktivitasHelper::catat("Melihat detail makanan: {$makanan->nama}");
-        // return view('makanan.detail', ['id' => $id]); // Assuming you have a view for showing Makanan details
         $makanan = MakananModel::findOrFail($id);
         return view('makanan.detail', compact('makanan'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
+        $makanan = MakananModel::findOrFail($id);
         return view('makanan.edit', compact('makanan'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request,  MakananModel $makanan)
+    public function update(Request $request, string $id)
     {
+        $makanan = MakananModel::findOrFail($id);
+
         $request->validate([
             'nama_makanan' => 'required|string|max:255',
             'harga' => 'required|integer',
@@ -86,11 +66,9 @@ class MakananController extends Controller
         return redirect()->route('makanan.index')->with('success', 'Makanan berhasil diperbarui.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(MakananModel $makanan)
+    public function destroy(string $id)
     {
+        $makanan = MakananModel::findOrFail($id);
         $makanan->delete();
 
         return redirect()->route('makanan.index')->with('success', 'Makanan berhasil dihapus.');
@@ -120,39 +98,28 @@ class MakananController extends Controller
     public function rekomendasiMakanan()
     {
         AktivitasHelper::catat('Melihat halaman rekomendasi makanan');
-        // $makanans = MakananModel::latest()->paginate(10);
         $makanans = MakananModel::all();
-        // Logic to handle the listing of recommended Makanan
-        return view('makanan.rekomendasi_makanan', compact('makanans')); // Assuming you have a view for listing recommended Makanan
-        // return redirect()->route('makanan.rekomendasi_makanan', ['showModal' => 'true']);
-
+        return view('makanan.rekomendasi_makanan', compact('makanans'));
     }
 
     public function getRekomendasi(Request $request)
     {
-        // Simpan preferensi ke session atau database...
         AktivitasHelper::catat("Memulai rekomendasi dengan diet: {$request->diet}");
 
-        // return redirect()->route('makanan.rekomendasi_makanan', ['showModal' => 'true']);
-
-        // Validasi input dari pengguna
         $request->validate([
             'budget' => 'required|numeric',
             'diet' => 'required|string',
         ]);
 
-        // Kirim request ke API Flask
         $response = Http::post('http://127.0.0.1:5000/rekomendasi', [
             'budget' => (int) $request->budget,
             'preferensi_diet' => $request->diet,
         ]);
 
-        // Cek jika request berhasil dan kembalikan response JSON
         if ($response->successful()) {
             return response()->json($response->json());
         }
 
-        // Jika gagal, kembalikan pesan error
         return response()->json(['error' => 'Gagal mengambil rekomendasi dari API.'], $response->status());
     }
 }
