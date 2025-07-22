@@ -9,7 +9,7 @@
 
     <!-- Left Image -->
     <div class="flex-1 min-w-[300px] h-[400px] md:h-auto bg-cover bg-center"
-         style="background-image: url('{{ asset('img/login.png') }}');">
+         style="background-image: url('{{ asset('img/login.png') }}')">
     </div>
 
     <!-- Right Form -->

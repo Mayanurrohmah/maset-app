@@ -7,6 +7,9 @@ use App\Models\MakananModel;
 use App\Helpers\AktivitasHelper;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\MakananImport;
+use Illuminate\Support\Facades\Log;
 
 class MakananController extends Controller
 {
@@ -25,19 +28,24 @@ class MakananController extends Controller
 
     public function create()
     {
-        return view('makanan.create');
+        return view('makanan.kelola_makanan.create');
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'nama_makanan' => 'required|string|max:255',
-            'harga' => 'required|integer',
+            'gambar' => 'nullable|url',
+            'kalori' => 'required|numeric',
+            'karbohidrat' => 'required|numeric',
+            'protein' => 'required|numeric',
+            'harga' => 'required|numeric',
+            'tipe_diet' => 'required|string',
         ]);
 
         MakananModel::create($request->all());
 
-        return redirect()->route('makanan.index')->with('success', 'Makanan berhasil ditambahkan.');
+        return redirect()->route('makanan.kelola_makanan')->with('success', 'Data makanan berhasil ditambahkan!');
     }
 
     public function show(string $id)
@@ -46,10 +54,14 @@ class MakananController extends Controller
         return view('makanan.detail', compact('makanan'));
     }
 
-    public function edit(string $id)
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(MakananModel $makanan)
     {
-        $makanan = MakananModel::findOrFail($id);
-        return view('makanan.edit', compact('makanan'));
+
+        AktivitasHelper::catat("Mengedit data makanan: {$makanan->nama_makanan}");
+        return view('makanan.kelola_makanan.edit', compact('makanan'));
     }
 
     public function update(Request $request, string $id)
@@ -58,12 +70,17 @@ class MakananController extends Controller
 
         $request->validate([
             'nama_makanan' => 'required|string|max:255',
-            'harga' => 'required|integer',
+            'gambar' => 'nullable|url',
+            'kalori' => 'required|numeric',
+            'karbohidrat' => 'required|numeric',
+            'protein' => 'required|numeric',
+            'harga' => 'required|numeric',
+            'tipe_diet' => 'required|string',
         ]);
 
         $makanan->update($request->all());
 
-        return redirect()->route('makanan.index')->with('success', 'Makanan berhasil diperbarui.');
+        return redirect()->route('makanan.kelola_makanan')->with('success', 'Data makanan berhasil diperbarui!');
     }
 
     public function destroy(string $id)
@@ -71,7 +88,7 @@ class MakananController extends Controller
         $makanan = MakananModel::findOrFail($id);
         $makanan->delete();
 
-        return redirect()->route('makanan.index')->with('success', 'Makanan berhasil dihapus.');
+        return redirect()->route('makanan.kelola_makanan')->with('success', 'Makanan berhasil dihapus.');
     }
 
     public function toggleFavorit($makanan_id)
@@ -121,5 +138,25 @@ class MakananController extends Controller
         }
 
         return response()->json(['error' => 'Gagal mengambil rekomendasi dari API.'], $response->status());
+    }
+
+    public function showImportForm()
+    {
+        return view('makanan.kelola_makanan.import');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv,txt'
+        ]);
+
+        try {
+            Excel::import(new MakananImport, $request->file('file'));
+            return redirect()->route('makanan.kelola_makanan')->with('success', 'Data makanan berhasil diimport!');
+        } catch (\Exception $e) {
+            Log::error('Import Error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat import: ' . $e->getMessage());
+        }
     }
 }
