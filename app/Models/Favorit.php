@@ -11,4 +11,14 @@ class Favorit extends Model
 
     protected $table = 'favorit'; // Nama tabel di database
     protected $fillable = ['user_id', 'makanan_id']; // Disesuaikan dengan kolom di tabel
+
+    public function makanan()
+    {
+        return $this->belongsTo(MakananModel::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

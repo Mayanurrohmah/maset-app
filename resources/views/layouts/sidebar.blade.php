@@ -1,80 +1,57 @@
-<aside id="sidebar" class="w-64 bg-white text-gray-800 shadow-lg fixed top-0 left-0 z-50 h-full overflow-y-auto transition-transform duration-300 transform -translate-x-full md:translate-x-0 rounded-r-3xl">
-    <div id="sidebar-overlay" class="fixed inset-0 bg-black opacity-50 z-40 hidden md:hidden"></div>
-    <div class="p-6 space-y-6">
-        <div class="flex items-center justify-between mb-8">
-            <button id="hamburger-btn-sidebar" class="md:hidden text-gray-600 hover:text-gray-900 focus:outline-none">
-                <i class="fas fa-times text-2xl"></i>
-            </button>
-        </div>
-
-        <nav class="space-y-3">
-            <a href="{{ route('profile.edit') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-100 hover:text-gray-800 transition duration-200 {{ request()->routeIs('profile.edit') ? 'bg-gray-100 text-gray-800 font-semibold' : '' }}">
-                <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-lime-400">
-                    {{-- DYNAMIC PROFILE PICTURE - FIX APPLIED HERE --}}
-                    <img src="{{ Auth::user()->photo ? asset('storage/' . Auth::user()->photo) : asset('images/default_profile.jpg') }}" alt="Profile" class="w-full h-full object-cover">
-                </div>
-                <div>
-                    <p class="font-semibold text-base">Hello {{ auth()->user()->name }}</p>
-                </div>
-            </a>
-
-            <div class="pt-6 mt-6 border-t border-gray-200 space-y-3">
-                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider pl-3 mb-2">Menu</h3>
-                <a href="{{ route('makanan.dashboard') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-lime-50 hover:text-lime-700 transition duration-200 {{ request()->routeIs('makanan.dashboard') ? 'bg-lime-100 text-lime-700 font-semibold' : '' }}">
-                <a href="{{ route('makanan.dashboard') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-lime-50 hover:text-lime-700 transition duration-200 {{ request()->routeIs('makanan.dashboard') ? 'bg-lime-100 text-lime-700 font-semibold' : '' }}">
-                    <i class="fas fa-chart-pie w-6 h-6 text-xl"></i>
-                    <span class="text-lg">Dashboard</span>
+<aside id="logo-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0" aria-label="Sidebar">
+    <div class="h-full px-3 pb-4 overflow-y-auto bg-white">
+        <ul class="space-y-2 font-medium">
+            {{-- Menu Utama --}}
+            <li>
+                <a href="{{ route('makanan.dashboard') }}" class="flex items-center p-2 rounded-lg transition duration-200 hover:bg-lime-50 hover:text-lime-700 group {{ request()->routeIs('makanan.dashboard') ? 'bg-lime-100 text-lime-700 font-semibold' : 'text-gray-900' }}">
+                    <i class="fas fa-chart-pie w-6 h-6 text-xl transition duration-75 {{ request()->routeIs('makanan.dashboard') ? 'text-lime-700' : 'text-gray-500 group-hover:text-lime-700' }}"></i>
+                    <span class="ms-3">Dashboard</span>
                 </a>
-
-                <a href="{{ route('makanan.rekomendasi_makanan') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-lime-50 hover:text-lime-700 transition duration-200 {{ request()->routeIs('makanan.rekomendasi_makanan') ? 'bg-lime-100 text-lime-700 font-semibold' : '' }}">
-                    <i class="fas fa-utensils w-6 h-6 text-xl"></i>
-                    <span class="text-lg">Daftar Makanan</span>
+            </li>
+            <li>
+                <a href="{{ route('makanan.rekomendasi_makanan') }}" class="flex items-center p-2 rounded-lg transition duration-200 hover:bg-lime-50 hover:text-lime-700 group {{ request()->routeIs('makanan.rekomendasi_makanan') ? 'bg-lime-100 text-lime-700 font-semibold' : 'text-gray-900' }}">
+                    <i class="fas fa-utensils w-6 h-6 text-xl transition duration-75 {{ request()->routeIs('makanan.rekomendasi_makanan') ? 'text-lime-700' : 'text-gray-500 group-hover:text-lime-700' }}"></i>
+                    <span class="ms-3">Daftar Makanan</span>
                 </a>
-                <a href="{{ route('makanan.favorit') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-lime-50 hover:text-lime-700 transition duration-200 {{ request()->routeIs('makanan.rekomendasi_makanan') ? 'bg-lime-100 text-lime-700 font-semibold' : '' }}">
-                    <i class="fas fa-utensils w-6 h-6 text-xl"></i>
-                    <span class="text-lg">Makanan Favorit</span>
+            </li>
+            <li>
+                <a href="{{ route('makanan.favorit') }}" class="flex items-center p-2 rounded-lg transition duration-200 hover:bg-lime-50 hover:text-lime-700 group {{ request()->routeIs('makanan.favorit') ? 'bg-lime-100 text-lime-700 font-semibold' : 'text-gray-900' }}">
+                    <i class="fas fa-heart w-6 h-6 text-xl transition duration-75 {{ request()->routeIs('makanan.favorit') ? 'text-lime-700' : 'text-gray-500 group-hover:text-lime-700' }}"></i>
+                    <span class="ms-3">Makanan Favorit</span>
                 </a>
-            </div>
+            </li>
 
-            <div class="pt-6 mt-4 border-t border-gray-200 space-y-3">
-                <div>
-                    <button id="admin-dropdown-btn" class="w-full flex items-center justify-between p-3 rounded-xl hover:bg-lime-50 hover:text-lime-700 transition duration-200 {{ request()->routeIs('admin.*') || request()->routeIs('makanan.kelola_makanan') || request()->routeIs('auth.user_activity') ? 'bg-lime-100 text-lime-700 font-semibold' : '' }}">
-                        <div class="flex items-center gap-4">
-                            <i class="fas fa-user-shield w-6 h-6 text-xl"></i>
-                            <span class="text-base">Admin</span> {{-- Diperkecil jadi text-base --}}
-                        </div>
-                        <i id="admin-chevron" class="fas fa-chevron-down text-sm transition-transform duration-200 {{ (request()->routeIs('admin.*') || request()->routeIs('makanan.kelola_makanan') || request()->routeIs('auth.user_activity')) ? 'rotate-180' : '' }}"></i>
-                    </button>
-
-                    <div id="admin-dropdown" class="mt-2 space-y-2 pl-8 {{ (request()->routeIs('admin.*') || request()->routeIs('makanan.kelola_makanan') || request()->routeIs('auth.user_activity')) ? 'block' : 'hidden' }}">
-                        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-lime-50 hover:text-lime-700 transition duration-200 {{ request()->routeIs('admin.dashboard') ? 'bg-lime-100 text-lime-700 font-semibold' : '' }}">
-                            <i class="fas fa-tachometer-alt w-6 h-6 text-lg"></i>
-                            <span class="text-sm">Dashboard Admin</span>
-                        </a>
-                        <a href="{{ route('makanan.kelola_makanan') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-lime-50 hover:text-lime-700 transition duration-200 {{ request()->routeIs('makanan.kelola_makanan') ? 'bg-lime-100 text-lime-700 font-semibold' : '' }}">
-                            <i class="fas fa-utensils w-6 h-6 text-lg"></i>
-                            <span class="text-sm">Kelola Data Makanan</span>
-                        </a>
-                        <a href="{{ route('auth.user_activity') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-lime-50 hover:text-lime-700 transition duration-200 {{ request()->routeIs('auth.user_activity') ? 'bg-lime-100 text-lime-700 font-semibold' : '' }}">
-                            <i class="fas fa-chart-line w-6 h-6 text-lg"></i>
-                            <span class="text-sm">Aktivitas Pengguna</span>
-                        </a>
-                        <a href="{{ route('auth.user_pengguna') }}" class="flex items-center gap-4 p-3 rounded-xl hover:bg-lime-50 hover:text-lime-700 transition duration-200 {{ request()->routeIs('auth.user_pengguna') ? 'bg-lime-100 text-lime-700 font-semibold' : '' }}">
-                            <i class="fas fa-users w-6 h-6 text-lg"></i> {{-- Ganti dari fa-chart-line ke fa-users --}}
-                            <span class="text-sm">Data Pengguna</span>
-                        </a>
-
-                    </div>
-                </div>
-            </div>
-
-            <form method="POST" action="{{ route('logout') }}" class="mt-8 pt-6 border-t border-gray-200">
-                @csrf
-                <button type="submit" class="w-full flex items-center gap-4 p-3 rounded-xl text-red-600 hover:bg-red-50 hover:text-red-700 transition duration-200">
-                    <i class="fas fa-sign-out-alt w-6 h-6 text-xl"></i>
-                    <span class="text-lg">Logout</span>
+            {{-- Dropdown Admin --}}
+            <li>
+                {{-- PERBAIKAN 1: Menambahkan kelas aktif pada tombol utama dropdown --}}
+                <button type="button" class="flex items-center w-full p-2 text-base transition duration-75 rounded-lg group hover:bg-lime-50 hover:text-lime-700 {{ (request()->routeIs('admin.*') || request()->routeIs('makanan.kelola_makanan') || request()->routeIs('auth.user_pengguna')) ? 'bg-lime-100 text-lime-700' : 'text-gray-900' }}" aria-controls="dropdown-admin" data-collapse-toggle="dropdown-admin">
+                    <i class="fas fa-user-shield w-6 h-6 text-xl text-gray-500 transition duration-75 group-hover:text-lime-700"></i>
+                    <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Admin</span>
+                    {{-- PERBAIKAN 2: Menambahkan kelas untuk merotasi ikon chevron --}}
+                    <i class="fas fa-chevron-down w-3 h-3 transition-transform duration-200 {{ (request()->routeIs('admin.*') || request()->routeIs('makanan.kelola_makanan') || request()->routeIs('auth.user_pengguna')) ? 'rotate-180' : '' }}"></i>
                 </button>
-            </form>
-        </nav>
+                {{-- PERBAIKAN 3: Menghapus kelas 'hidden' secara dinamis jika route aktif --}}
+                <ul id="dropdown-admin" class="{{ (request()->routeIs('admin.*') || request()->routeIs('makanan.kelola_makanan') || request()->routeIs('auth.user_pengguna')) ? '' : 'hidden' }} py-2 space-y-2">
+                    <li>
+                        <a href="{{ route('admin.dashboard') }}" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-lime-50 hover:text-lime-700 {{ request()->routeIs('admin.dashboard') ? 'bg-lime-100 text-lime-700' : '' }}">
+                            <i class="fas fa-tachometer-alt w-5 h-5 text-gray-500 transition duration-75 group-hover:text-lime-700"></i>
+                            <span class="ms-3">Dashboard Admin</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('makanan.kelola_makanan') }}" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-lime-50 hover:text-lime-700 {{ request()->routeIs('makanan.kelola_makanan') ? 'bg-lime-100 text-lime-700' : '' }}">
+                            <i class="fas fa-utensils w-5 h-5 text-gray-500 transition duration-75 group-hover:text-lime-700"></i>
+                            <span class="ms-3">Kelola Makanan</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('auth.user_pengguna') }}" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-lime-50 hover:text-lime-700 {{ request()->routeIs('auth.user_pengguna') ? 'bg-lime-100 text-lime-700' : '' }}">
+                            <i class="fas fa-users w-5 h-5 text-gray-500 transition duration-75 group-hover:text-lime-700"></i>
+                            <span class="ms-3">Data Pengguna</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
     </div>
 </aside>
