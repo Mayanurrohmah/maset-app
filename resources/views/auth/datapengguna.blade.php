@@ -19,7 +19,7 @@
                             <th class="px-6 py-3">Profil</th>
                             <th class="px-6 py-3">Nama</th>
                             <th class="px-6 py-3">Email</th>
-                            <th class="px-6 py-3">Role</th>
+                            <!-- <th class="px-6 py-3">Role</th> -->
                             <th class="px-6 py-3">Bergabung</th>
                             <th class="px-6 py-3 text-center">Aksi</th>
                         </tr>
@@ -37,8 +37,8 @@
                                     />
                                 </td>
                                 <td class="px-6 py-4">{{ $user->name }}</td>
-                                <td class="px-6 py-4">{{ $user->email }}</td>
-                                <td class="px-6 py-4">
+                                <td class="px-6 py-4" >{{ $user->email }}</td>
+                                <!-- <td class="px-6 py-4">
                                     <form action="{{ route('auth.user_pengguna.role', $user->id) }}" method="POST">
                                         @csrf
                                         <select name="role" onchange="this.form.submit()" class="border border-gray-300 text-sm rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-lime-300">
@@ -46,7 +46,7 @@
                                             <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Admin</option>
                                         </select>
                                     </form>
-                                </td>
+                                </td> -->
                                 <td class="px-6 py-4 text-gray-600">{{ $user->created_at->format('d M Y') }}</td>
                                 <td class="px-6 py-4 text-center space-x-2">
                                     <a href="{{ route('auth.user_pengguna.edit', $user->id) }}" class="text-blue-600 hover:text-blue-800" title="Edit">

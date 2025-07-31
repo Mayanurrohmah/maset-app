@@ -10,12 +10,12 @@
                 Tambah Data baru
             </a>
 
-            <a href="{{ route('makanan.import') }}" class="flex items-center gap-2 text-green-600 font-semibold">
+            <!-- <a href="{{ route('makanan.import') }}" class="flex items-center gap-2 text-green-600 font-semibold">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v6h6M20 20v-6h-6M4 14v6h6M20 10V4h-6" />
                 </svg>
                 Import dari CSV
-            </a>
+            </a> -->
 
             <button id="openImportModal" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
                 📥 Import CSV

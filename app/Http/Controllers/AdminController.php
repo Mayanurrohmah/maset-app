@@ -125,16 +125,16 @@ class AdminController extends Controller
     /**
      * Ubah role pengguna.
      */
-    public function ubahRole(Request $request, $id)
-    {
-        $request->validate([
-            'role' => 'required|in:user,admin',
-        ]);
+    // public function ubahRole(Request $request, $id)
+    // {
+    //     $request->validate([
+    //         'role' => 'required|in:user,admin',
+    //     ]);
 
-        $user = User::findOrFail($id);
-        $user->role = $request->input('role');
-        $user->save();
+    //     $user = User::findOrFail($id);
+    //     $user->role = $request->input('role');
+    //     $user->save();
 
-        return redirect()->back()->with('success', 'Role pengguna berhasil diubah.');
-    }
+    //     return redirect()->back()->with('success', 'Role pengguna berhasil diubah.');
+    // }
 }
