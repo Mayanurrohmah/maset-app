@@ -21,8 +21,29 @@ class MakananModel extends Model
         'cluster',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Event ini akan berjalan setiap kali data akan disimpan (baik create maupun update)
+        static::saving(function ($makanan) {
+            if ($makanan->harga < 19000) {
+                $makanan->level_harga = 'Normal';
+            } elseif ($makanan->harga <= 39000) {
+                $makanan->level_harga = 'Mahal';
+            } else {
+                $makanan->level_harga = 'Premium';
+            }
+        });
+    }
+
     public function disukaiOleh()
     {
         return $this->belongsToMany(User::class, 'favorit', 'user_id', 'makanan_id');
+    }
+
+    public function favorits()
+    {
+        return $this->hasMany(Favorit::class, 'makanan_id');
     }
 }
