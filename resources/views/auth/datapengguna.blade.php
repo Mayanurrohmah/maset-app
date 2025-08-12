@@ -19,6 +19,7 @@
                             <th class="px-6 py-3">Profil</th>
                             <th class="px-6 py-3">Nama</th>
                             <th class="px-6 py-3">Email</th>
+                            <!-- <th class="px-6 py-3">Role</th> -->
                             <th class="px-6 py-3">Bergabung</th>
                             <th class="px-6 py-3">Aktivitas</th>
                             <th class="px-6 py-3 text-center">Aksi</th>

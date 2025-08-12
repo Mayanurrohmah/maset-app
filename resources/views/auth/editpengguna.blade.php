@@ -16,7 +16,7 @@
             <div class="mb-5">
                 <label for="email" class="block text-gray-700 font-medium mb-1">Email</label>
                 <input type="email" name="email" id="email"
-                       value="{{ old('email', $user->email) }}" required
+                       value="{{ old('email', $user->email) }}" required readonly
                        class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-lime-400 focus:outline-none">
             </div>
 
