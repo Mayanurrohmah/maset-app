@@ -14,6 +14,17 @@
             </div>
             <div class="flex items-center">
                 <div class="flex items-center ms-3">
+                    <div class="flex items-center ms-3">
+                        <div class="flex items-center ms-3 space-x-4">
+                           @auth
+                     @if(Auth::user()->role === 'user')
+                  {{-- Icon Makanan Favorit Outline --}}
+                      <a href="{{ route('makanan.favorit') }}" 
+                  class="flex items-center justify-center w-9 h-9 rounded-full hover:bg-lime-50 transition duration-200 {{ request()->routeIs('makanan.favorit') ? 'bg-lime-100' : '' }}">
+                      <i class="far fa-heart text-lg {{ request()->routeIs('makanan.favorit') ? 'text-lime-700' : 'text-gray-500 hover:text-lime-700' }}"></i>
+                  </a>
+                 @endif
+                @endauth
                     {{-- Tombol Dropdown Profil Pengguna --}}
                     <div>
                         <button type="button" class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-lime-300" aria-expanded="false" data-dropdown-toggle="dropdown-user">
