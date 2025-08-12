@@ -13,16 +13,21 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
     <!-- Tailwind & Font Awesome -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- @vite(['resources/css/app.css', 'resources/js/app.js']) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.js"></script> -->
+
+
 
     <!-- flowbite -->
-    <script src="{{ asset('node_modules/flowbite/dist/flowbite.js') }}"></script>
-    <link rel="stylesheet" href="{{ asset('node_modules/flowbite/dist/flowbite.css') }}">
+    <!-- <script src="{{ asset('node_modules/flowbite/dist/flowbite.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('node_modules/flowbite/dist/flowbite.css') }}"> -->
 
     <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 </head>
 

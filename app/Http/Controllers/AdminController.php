@@ -17,79 +17,56 @@ class AdminController extends Controller
      */
     public function dashboard()
     {
-        // $jumlahUser = User::count();
-        // $jumlahMakanan = MakananModel::count();
-        // $jumlahFavorit = Favorit::count();
-
-        // // Data untuk chart makanan berdasarkan tipe diet
-        // $kategoriData = MakananModel::select('tipe_diet', DB::raw('count(*) as total'))
-        //     ->groupBy('tipe_diet')
-        //     ->pluck('total');
-
-        // $kategoriLabels = MakananModel::select('tipe_diet', DB::raw('count(*) as total'))
-        //     ->groupBy('tipe_diet')
-        //     ->pluck('tipe_diet');
-
-        // return view('admin.dashboard', compact(
-        //     'jumlahUser',
-        //     'jumlahMakanan',
-        //     'jumlahFavorit',
-        //     'kategoriLabels',
-        //     'kategoriData'
-        // ));
-
-         // --- 1. Data untuk Kartu Statistik Utama ---
+        // --- 1. Data untuk Kartu Statistik Utama ---
         $jumlahUser = User::count();
         $jumlahMakanan = MakananModel::count();
-        
+
         // Cari makanan paling favorit berdasarkan jumlah favoritnya
         $palingFavorit = MakananModel::withCount('favorits')
             ->orderBy('favorits_count', 'desc')
             ->first();
 
-        // Asumsi: Anda memiliki kolom 'last_seen_at' di tabel users yang diupdate saat user aktif
-        // $penggunaAktif = User::where('last_seen_at', '>=', Carbon::today())->count();
-        
+        // Hitung pengguna aktif hari ini (gunakan last_login_at jika ada, fallback ke created_at)
+        $penggunaAktif = User::whereDate('created_at', Carbon::today())->count();
+
         // --- 2. Data untuk Tabel ---
         $penggunaTerbaru = User::latest()->take(5)->get();
 
         // --- 3. Data untuk Grafik ---
 
         // Grafik Pendaftaran Pengguna Baru (7 Hari Terakhir)
-        $userStats = User::select(DB::raw('DATE(created_at) as date'), DB::raw('count(*) as count'))
-            ->where('created_at', '>=', Carbon::now()->subDays(7))
-            ->groupBy('date')
-            ->orderBy('date', 'asc')
-            ->get();
-        
-        $userLabels = $userStats->pluck('date')->map(function($date) {
-            return Carbon::parse($date)->format('D, M j'); // Format: Sun, Jul 25
-        });
-        $userData = $userStats->pluck('count');
+        $userLabels = [];
+        $userData = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $tanggal = Carbon::today()->subDays($i);
+            $userLabels[] = $tanggal->format('d M');
+            $userData[] = User::whereDate('created_at', $tanggal)->count();
+        }
 
         // Grafik Distribusi Tipe Diet
         $dietStats = MakananModel::select('tipe_diet', DB::raw('count(*) as total'))
             ->groupBy('tipe_diet')
             ->get();
-        
-        $dietLabels = $dietStats->pluck('tipe_diet');
-        $dietData = $dietStats->pluck('total');
+        $dietLabels = $dietStats->pluck('tipe_diet')->toArray();
+        $dietData = $dietStats->pluck('total')->map(fn($v) => (int)$v)->toArray();
+
+        // Ambil distribusi tipe data
+        // $results = DB::table('makanan')
+        //     ->select('tipe_diet', DB::raw('COUNT(*) as count'))
+        //     ->groupBy('tipe_diet')
+        //     ->get();
+
+        // // Siapkan data untuk Chart.js
+        // $labels = $results->pluck('tipe_diet');
+        // $data = $results->pluck('count');
 
         // Grafik 5 Makanan Terfavorit
         $topFoods = MakananModel::withCount('favorits')
             ->orderBy('favorits_count', 'desc')
             ->take(5)
             ->get();
-            
-        $topFoodsLabels = $topFoods->pluck('nama_makanan');
-        // $topFoodsData = $topFoods->pluck('favorits_count');
-        // $topFoodsData = $topFoods->pluck('favorits_count')->map(fn($val) => (int) $val);
-        $topFoodsData = $topFoods->map(function ($item) {
-        return [
-                'x' => $item->nama_makanan,
-                'y' => (int) $item->favorits_count,
-            ];
-        });
+        $topFoodsLabels = $topFoods->pluck('nama_makanan')->toArray();
+        $topFoodsData = $topFoods->pluck('favorits_count')->map(fn($v) => (int)$v)->toArray();
 
 
         // Mengirim semua data ke view
@@ -97,18 +74,123 @@ class AdminController extends Controller
             'jumlahUser',
             'jumlahMakanan',
             'palingFavorit',
-            // 'penggunaAktif',
+            'penggunaAktif',
             'penggunaTerbaru',
             'userLabels',
             'userData',
             'dietLabels',
             'dietData',
-            // 'topFoodsLabels',
-            'topFoodsData'
+            'topFoodsLabels',
+            'topFoodsData',
+            // 'labels', 
+            // 'data'
         ));
-    
     }
 
+    // public function chartData(Request $request)
+    // {
+    //     $type = $request->query('type');
+
+    //     switch ($type) {
+    //         case 'user':
+    //             $tanggal7Hari = collect(range(0, 6))->map(function ($daysAgo) {
+    //                 return \Carbon\Carbon::today()->subDays($daysAgo)->format('Y-m-d');
+    //             })->reverse();
+
+    //             $userLabels = $tanggal7Hari->map(function ($tanggal) {
+    //                 return \Carbon\Carbon::parse($tanggal)->format('d M');
+    //             });
+
+    //             $userData = $tanggal7Hari->map(function ($tanggal) {
+    //                 return \App\Models\User::whereDate('created_at', $tanggal)->count();
+    //             });
+
+    //             return response()->json([
+    //                 'labels' => $userLabels,
+    //                 'data' => $userData
+    //             ]);
+
+    //         case 'diet':
+    //             $dietCounts = \App\Models\MakananModel::select('tipe_diet')
+    //                 ->whereNotNull('tipe_diet')
+    //                 ->groupBy('tipe_diet')
+    //                 ->selectRaw('tipe_diet, COUNT(*) as jumlah')
+    //                 ->get();
+
+    //             return response()->json([
+    //                 'labels' => $dietCounts->pluck('tipe_diet'),
+    //                 'data' => $dietCounts->pluck('jumlah'),
+    //             ]);
+
+    //         case 'top_foods':
+    //             $topFoods = \App\Models\MakananModel::orderByDesc('favorit')->take(5)->get();
+
+    //             return response()->json([
+    //                 'labels' => $topFoods->pluck('nama_makanan'),
+    //                 'data' => $topFoods->pluck('favorit'),
+    //             ]);
+
+    //         default:
+    //             return response()->json(['error' => 'Invalid type'], 400);
+    //     }
+    // }
+
+    public function chartData(Request $request)
+    {
+        $type = $request->query('type');
+
+        switch ($type) {
+            case 'user':
+                $tanggal7Hari = collect(range(0, 6))->map(function ($daysAgo) {
+                    return Carbon::today()->subDays($daysAgo)->format('Y-m-d');
+                })->reverse();
+
+                $userLabels = $tanggal7Hari->map(fn($tanggal) => Carbon::parse($tanggal)->format('d M'))->toArray();
+                $userData = $tanggal7Hari->map(fn($tanggal) => (int) User::whereDate('created_at', $tanggal)->count())->toArray();
+
+                return response()->json([
+                    'labels' => $userLabels,
+                    'data' => $userData
+                ]);
+
+            case 'diet':
+                $dietCounts = MakananModel::whereNotNull('tipe_diet')
+                    ->select('tipe_diet', DB::raw('COUNT(*) as jumlah'))
+                    ->groupBy('tipe_diet')
+                    ->get();
+
+                // dd($dietCounts);
+
+                return response()->json([
+                    'labels' => $dietCounts->pluck('tipe_diet'),
+                    'data' => $dietCounts->pluck('jumlah')->map(fn($x) => (int) $x),
+                ]);
+
+            case 'top_foods':
+                $topFoods = MakananModel::withCount('favorits')
+                    ->orderByDesc('favorits_count')
+                    ->take(5)
+                    ->get();
+
+                return response()->json([
+                    'labels' => $topFoods->pluck('nama_makanan')->toArray(),
+                    'data' => $topFoods->pluck('favorits_count')->map(fn($x) => (int) $x)->toArray(),
+                ]);
+
+            default:
+                return response()->json(['error' => 'Invalid type'], 400);
+        }
+    }
+
+    public function getData()
+    {
+        $data = DB::table('makanan')
+            ->select('tipe_diet', DB::raw('COUNT(*) as jumlah'))
+            ->groupBy('tipe_diet')
+            ->get();
+
+        return response()->json($data);
+    }
     /**
      * Tampilkan log aktivitas user dan admin dengan filter.
      */

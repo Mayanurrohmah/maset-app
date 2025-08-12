@@ -49,10 +49,10 @@
         {{-- Menu Akses Cepat --}}
         <div class="bg-white p-4 rounded-2xl shadow-xl">
             <div class="flex flex-wrap justify-center items-center gap-4">
-                <a href="#" class="flex-grow sm:flex-grow-0 bg-lime-600 text-white text-center font-bold py-3 px-6 rounded-lg hover:bg-lime-700 transition">Kelola Makanan</a>
-                <a href="#" class="flex-grow sm:flex-grow-0 bg-blue-600 text-white text-center font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition">Kelola Pengguna</a>
-                <a href="#" class="flex-grow sm:flex-grow-0 bg-gray-700 text-white text-center font-bold py-3 px-6 rounded-lg hover:bg-gray-800 transition">Lihat Laporan</a>
-                <a href="#" class="flex-grow sm:flex-grow-0 bg-indigo-600 text-white text-center font-bold py-3 px-6 rounded-lg hover:bg-indigo-700 transition">Pengaturan</a>
+                <a href="{{ route('makanan.rekomendasi_makanan') }}" class="flex-grow sm:flex-grow-0 bg-lime-600 text-white text-center font-bold py-3 px-6 rounded-lg hover:bg-lime-700 transition">Kelola Makanan</a>
+                <a href="{{ route('auth.user_pengguna') }}" class="flex-grow sm:flex-grow-0 bg-blue-600 text-white text-center font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition">Kelola Pengguna</a>
+                <a href="{{ route('auth.user_pengguna') }}" class="flex-grow sm:flex-grow-0 bg-gray-700 text-white text-center font-bold py-3 px-6 rounded-lg hover:bg-gray-800 transition">Data Pengguna</a>
+                <a href="{{ route('makanan.favorit') }}" class="flex-grow sm:flex-grow-0 bg-indigo-600 text-white text-center font-bold py-3 px-6 rounded-lg hover:bg-indigo-700 transition">Makanan Favorit</a>
             </div>
         </div>
 
@@ -61,14 +61,22 @@
             {{-- Grafik Kiri --}}
             <div class="lg:col-span-2 space-y-8">
                 {{-- Grafik Pengguna Baru --}}
-                <div class="bg-white p-6 rounded-xl shadow-xl">
+                <!-- <div class="bg-white p-6 rounded-xl shadow-xl">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Pendaftaran Pengguna Baru (7 Hari Terakhir)</h3>
+                    <div id="userChart"></div>
+                </div> -->
+                <div class="bg-white p-4 rounded shadow">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">Pendaftaran Pengguna Baru (7 Hari Terakhir)</h3>
                     <div id="userChart"></div>
                 </div>
 
                 {{-- Grafik Makanan Terfavorit --}}
-                <div class="bg-white p-6 rounded-xl shadow-xl">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4">5 Makanan Terfavorit</h3>
+                <!-- <div class="bg-white p-4 rounded-lg shadow-md h-80">
+                    <h2 class="text-lg font-semibold mb-2">Top 5 Makanan Favorit</h2>
+                    <canvas id="topFoodsChart" height="250"></canvas>
+                </div> -->
+                <div class="bg-white p-4 rounded shadow">
+                    <h2 class="text-lg font-semibold mb-2">Top 5 Makanan Favorit</h2>
                     <div id="topFoodsChart"></div>
                 </div>
             </div>
@@ -77,8 +85,7 @@
             <div class="lg:col-span-1 space-y-8">
                 {{-- Donut Chart Diet --}}
                 <div class="bg-white p-6 rounded-xl shadow-xl">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Distribusi Tipe Diet</h3>
-                    <div id="dietChart" class="flex justify-center"></div>
+                    <div id="dietChart"></div>
                 </div>
 
                 {{-- Tabel Pengguna Terbaru --}}
@@ -106,98 +113,176 @@
 
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-     <script>
-            // Data sekarang diambil dari controller Laravel
-            const userLabels = {!! json_encode($userLabels ?? []) !!};
-            const userData = {!! json_encode($userData ?? []) !!};
-            
-            const dietLabels = {!! json_encode($dietLabels ?? []) !!};
-            const dietData = {!! json_encode($dietData ?? []) !!};
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const isMobile = window.innerWidth <= 640;
+            const initialHeight = 300;
 
-            // const topFoodsLabels = {!! json_encode($topFoodsLabels ?? []) !!};
-            const topFoodsData = {!! json_encode($topFoodsData ?? []) !!};
-
-            // --- Grafik Pendaftaran Pengguna Baru (Area Chart) ---
-            const userChartOptions = {
-                series: [{ name: "Pengguna Baru", data: userData }],
-                chart: { type: 'area', height: 350, toolbar: { show: false } },
-                dataLabels: { enabled: false },
-                stroke: { curve: 'smooth', width: 2 },
-                xaxis: { type: 'category', categories: userLabels },
-                colors: ['#16a34a'],
-                tooltip: {
-                    enabled: true,
-                    y: {
-                        formatter: function(val) {
-                            return val + " pengguna";
-                        }
-                    }
-                },
-            };
-            const userChart = new ApexCharts(document.querySelector("#userChart"), userChartOptions);
-            userChart.render();
-
-            // --- Grafik Distribusi Tipe Diet (Donut Chart) ---
-            const dietChartOptions = {
-                series: dietData,
-                chart: { type: 'donut', height: 350 },
-                labels: dietLabels,
-                colors: ['#4ade80', '#facc15', '#60a5fa', '#a78bfa'],
-                legend: { position: 'bottom' },
-                tooltip: {
-                    enabled: true,
-                    y: {
-                        formatter: function (val) {
-                            return val + " item"
-                        }
+            // Fungsi umum untuk render chart
+            function renderChart(canvasId, chartType, labels, data, title) {
+                const ctx = document.getElementById(canvasId).getContext('2d');
+                return new Chart(ctx, {
+                    type: chartType,
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: title,
+                            data: data,
+                            borderWidth: 1,
+                            backgroundColor: generateColors(data.length),
+                        }]
                     },
-                },
-                responsive: [{ breakpoint: 480, options: { chart: { width: 200 }, legend: { position: 'bottom' } } }]
-            };
-            const dietChart = new ApexCharts(document.querySelector("#dietChart"), dietChartOptions);
-            dietChart.render();
-
-            // --- Grafik Makanan Terfavorit (Horizontal Bar dengan struktur x-y) ---
-            const topFoodsChartOptions = {
-                series: [{
-                    name: 'Jumlah Favorit',
-                    data: topFoodsData
-                }],
-                chart: {
-                    type: 'bar',
-                    height: 350,
-                    toolbar: { show: false }
-                },
-                plotOptions: {
-                    bar: {
-                        horizontal: true,
-                        borderRadius: 4
-                    }
-                },
-                dataLabels: {
-                    enabled: false
-                },
-                colors: ['#fb923c'],
-                grid: {
-                    show: false
-                },
-                tooltip: {
-                    enabled: true,
-                    y: {
-                        formatter: function (val) {
-                            return val + ' favorit';
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: chartType === 'doughnut' || chartType === 'pie',
+                            }
                         }
-                    },
-                    marker: {
-                        show: true
                     }
-                }
-            };
+                });
+            }
 
-            const topFoodsChart = new ApexCharts(document.querySelector("#topFoodsChart"), topFoodsChartOptions);
-            topFoodsChart.render();
+            // Generate warna acak
+            function generateColors(count) {
+                return Array.from({
+                        length: count
+                    }, () =>
+                    `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`
+                );
+            }
+
+            // Ambil dan render semua chart
+            fetchChartData('user', 'userChart', 'line', 'Pengguna per Hari');
+            fetchChartData('diet', 'dietChart', 'doughnut', 'Distribusi Diet');
+            fetchChartData('top_foods', 'topFoodsChart', 'bar', 'Top 5 Makanan Favorit');
+
+            function fetchChartData(type, canvasId, chartType, title) {
+                const params = new URLSearchParams({
+                    type
+                });
+                fetch(`/dashboard/chart-data?${params}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.labels && data.data) {
+                            renderChart(canvasId, chartType, data.labels, data.data, title);
+                        } else {
+                            console.error("Data tidak ditemukan untuk chart:", type);
+                        }
+                    })
+                    .catch(err => console.error("Gagal fetch data chart:", err));
+            }
+        });
+    </script> -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // User Registration Chart
+            fetch('{{ route("admin.chartData") }}?type=user')
+                .then(response => response.json())
+                .then(data => {
+                    const options = {
+                        chart: {
+                            type: 'line',
+                            height: 350
+                        },
+                        series: [{
+                            name: 'User Baru',
+                            data: data.data.map(Number),
+                        }],
+                        xaxis: {
+                            categories: data.labels
+                        },
+                        tooltip: {
+                            y: {
+                                formatter: val => val + " user"
+                            }
+                        },
+                        title: {
+                            text: 'Pendaftaran User (7 Hari Terakhir)'
+                        }
+                    };
+                    new ApexCharts(document.querySelector("#userChart"), options).render();
+                });
 
 
-        </script>
+
+            // Diet Distribution Chart
+            fetch('{{ route("admin.chartData") }}?type=diet')
+                .then(response => response.json())
+                .then(data => {
+
+                    const options = {
+                        chart: {
+                            type: 'pie',
+                            height: 350
+                        },
+                        series: data.data.map(Number),
+                        labels: data.labels,
+                        
+
+                        legend: {
+                            position: 'bottom'
+                        },
+                        title: {
+                            text: 'Distribusi Tipe Diet'
+                        }
+                    };
+                    new ApexCharts(document.querySelector("#dietChart"), options).render();
+                });
+
+            // Top Foods Chart
+            fetch('{{ route("admin.chartData") }}?type=top_foods')
+                .then(response => response.json())
+                .then(data => {
+                    const options = {
+                        chart: {
+                            type: 'bar',
+                            height: 350
+                        },
+                        series: [{
+                            name: 'Jumlah Favorit',
+                            data: data.data.map(Number)
+                        }],
+                        xaxis: {
+                            categories: data.labels
+                        },
+                        tooltip: {
+                            y: {
+                                formatter: function(val, opts) {
+                                    let labelName = opts.w.globals.labels[opts.dataPointIndex];
+                                    return `${labelName}: ${val} kali dipilih`;
+                                }
+                            }
+                        },
+                        title: {
+                            text: '5 Makanan Paling Disukai'
+                        }
+                    };
+                    new ApexCharts(document.querySelector("#topFoodsChart"), options).render();
+                });
+        });
+
+        // var options = {
+        //     chart: {
+        //         type: 'line'
+        //     },
+        //     series: [{
+        //         name: 'sales',
+        //         data: [30, 40, 35, 50, 49, 60, 70, 91, 125]
+        //     }],
+        //     xaxis: {
+        //         categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999]
+        //     }
+        // }
+
+        // var chart = new ApexCharts(document.querySelector("#dietChart"), options);
+
+        // chart.render();
+    </script>
+
+
     @endpush
 </x-app-layout>

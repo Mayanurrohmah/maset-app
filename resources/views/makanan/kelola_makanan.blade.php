@@ -107,8 +107,8 @@
                             </div>
                         </th> -->
                         <td class="px-6 py-4">{{ $makanan->nama_makanan }}</td>
-                        <td class="px-6 py-4">{{ $makanan->protein }} kcal</td>
-                        <td class="px-6 py-4">{{ $makanan->karbohidrat }} kcal</td>
+                        <td class="px-6 py-4">{{ $makanan->protein }} g</td>
+                        <td class="px-6 py-4">{{ $makanan->karbohidrat }} g</td>
                         <td class="px-6 py-4">{{ $makanan->kalori }} kcal</td>
                         <td class="px-6 py-4">Rp. {{ number_format($makanan->harga, 0, ',', '.') }}</td>
                         <td class="px-6 py-4">

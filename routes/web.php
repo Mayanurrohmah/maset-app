@@ -39,6 +39,17 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::put('/data-pengguna/{id}', [AdminController::class, 'updatePengguna'])->name('auth.user_pengguna.update');
     Route::delete('/data-pengguna/{id}', [AdminController::class, 'hapusPengguna'])->name('auth.user_pengguna.hapus');
     Route::post('/data-pengguna/{id}/ubah-role', [AdminController::class, 'ubahRole'])->name('auth.user_pengguna.role');
+
+    // Route::get('/chart-data', [AdminController::class, 'chartData']);
+    Route::get('/dashboard/chart-data', [AdminController::class, 'chartData'])->name('admin.chartData');
+
+    Route::get('/chart', [AdminController::class, 'getData']);
+});
+
+// routes/web.php
+Route::prefix('api')->group(function () {
+    Route::get('/top5-makanan', [AdminController::class, 'top5MakananFavorit']);
+    Route::get('/distribusi-tipe-diet', [AdminController::class, 'distribusiTipeDiet']);
 });
 
 
