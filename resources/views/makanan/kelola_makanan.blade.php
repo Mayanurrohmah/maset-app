@@ -16,11 +16,11 @@
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
                 </svg>
                 Import dari CSV
-            </a>
+                </a>
 
-            <button id="openImportModal" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
-                📥 Import CSV
-            </button>
+                <button id="openImportModal" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+                    📥 Import CSV
+                </button>
         </div>
         @endif
 
@@ -102,7 +102,11 @@
                     <tr class="bg-white border-b hover:bg-gray-50">
                         <td class="w-4 p-4">{{ $makanans->firstItem() + $index }}</td>
                         <td class="p-4">
-                            <img class="w-16 md:w-32 max-w-full max-h-full" src="{{ $makanan->gambar }}" alt="{{ $makanan->nama_makanan }}" onerror="this.src='/images/default.jpg'">
+                            <img class="w-16 md:w-32 max-w-full max-h-full" src="{{ $makanan->gambar_url }}" alt="{{ $makanan->nama_makanan }}"
+                                loading="lazy"
+                                referrerpolicy="no-referrer"
+                                data-fallback="{{ asset('images/default_makanan.png') }}"
+                                onerror="this.onerror=null; this.src=this.dataset.fallback;">
                         </td>
                         <!-- <th scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap">
 

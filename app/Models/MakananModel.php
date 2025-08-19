@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class MakananModel extends Model
 {
@@ -45,5 +46,26 @@ class MakananModel extends Model
     public function favorits()
     {
         return $this->hasMany(Favorit::class, 'makanan_id');
+    }
+
+    // App\Models\MakananModel.php
+
+
+    public function getGambarUrlAttribute()
+    {
+        $img = $this->gambar;
+
+        // Jika ini URL valid, kirim balik URL tsb
+        if ($img && filter_var($img, FILTER_VALIDATE_URL)) {
+            return $img;
+        }
+
+        // Jika ini path di storage/public
+        if ($img && Storage::disk('public')->exists($img)) {
+            return Storage::url($img);
+        }
+
+        // Fallback
+        return asset('images/default_makanan.png');
     }
 }

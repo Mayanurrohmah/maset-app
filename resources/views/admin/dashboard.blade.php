@@ -61,21 +61,13 @@
             {{-- Grafik Kiri --}}
             <div class="lg:col-span-2 space-y-8">
                 {{-- Grafik Pengguna Baru --}}
-                <!-- <div class="bg-white p-6 rounded-xl shadow-xl">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Pendaftaran Pengguna Baru (7 Hari Terakhir)</h3>
-                    <div id="userChart"></div>
-                </div> -->
-                <div class="bg-white p-4 rounded shadow">
+                <div class="bg-white p-6 rounded-xl shadow-xl">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">Pendaftaran Pengguna Baru (7 Hari Terakhir)</h3>
                     <div id="userChart"></div>
                 </div>
 
                 {{-- Grafik Makanan Terfavorit --}}
-                <!-- <div class="bg-white p-4 rounded-lg shadow-md h-80">
-                    <h2 class="text-lg font-semibold mb-2">Top 5 Makanan Favorit</h2>
-                    <canvas id="topFoodsChart" height="250"></canvas>
-                </div> -->
-                <div class="bg-white p-4 rounded shadow">
+                <div class="bg-white p-6 rounded-xl shadow-xl">
                     <h2 class="text-lg font-semibold mb-2">Top 5 Makanan Favorit</h2>
                     <div id="topFoodsChart"></div>
                 </div>
@@ -112,71 +104,6 @@
     </div>
 
     @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const isMobile = window.innerWidth <= 640;
-            const initialHeight = 300;
-
-            // Fungsi umum untuk render chart
-            function renderChart(canvasId, chartType, labels, data, title) {
-                const ctx = document.getElementById(canvasId).getContext('2d');
-                return new Chart(ctx, {
-                    type: chartType,
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: title,
-                            data: data,
-                            borderWidth: 1,
-                            backgroundColor: generateColors(data.length),
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: chartType === 'doughnut' || chartType === 'pie',
-                            }
-                        }
-                    }
-                });
-            }
-
-            // Generate warna acak
-            function generateColors(count) {
-                return Array.from({
-                        length: count
-                    }, () =>
-                    `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`
-                );
-            }
-
-            // Ambil dan render semua chart
-            fetchChartData('user', 'userChart', 'line', 'Pengguna per Hari');
-            fetchChartData('diet', 'dietChart', 'doughnut', 'Distribusi Diet');
-            fetchChartData('top_foods', 'topFoodsChart', 'bar', 'Top 5 Makanan Favorit');
-
-            function fetchChartData(type, canvasId, chartType, title) {
-                const params = new URLSearchParams({
-                    type
-                });
-                fetch(`/dashboard/chart-data?${params}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.labels && data.data) {
-                            renderChart(canvasId, chartType, data.labels, data.data, title);
-                        } else {
-                            console.error("Data tidak ditemukan untuk chart:", type);
-                        }
-                    })
-                    .catch(err => console.error("Gagal fetch data chart:", err));
-            }
-        });
-    </script> -->
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // User Registration Chart
@@ -207,13 +134,10 @@
                     new ApexCharts(document.querySelector("#userChart"), options).render();
                 });
 
-
-
             // Diet Distribution Chart
             fetch('{{ route("admin.chartData") }}?type=diet')
                 .then(response => response.json())
                 .then(data => {
-
                     const options = {
                         chart: {
                             type: 'pie',
@@ -221,8 +145,6 @@
                         },
                         series: data.data.map(Number),
                         labels: data.labels,
-                        
-
                         legend: {
                             position: 'bottom'
                         },
@@ -243,7 +165,7 @@
                             height: 350
                         },
                         series: [{
-                            name: 'Jumlah Favorit',
+                            name: 'Difavoritkan',
                             data: data.data.map(Number)
                         }],
                         xaxis: {
@@ -253,7 +175,7 @@
                             y: {
                                 formatter: function(val, opts) {
                                     let labelName = opts.w.globals.labels[opts.dataPointIndex];
-                                    return `${labelName}: ${val} kali dipilih`;
+                                    return `${val} kali - ${labelName}`;
                                 }
                             }
                         },
@@ -264,25 +186,7 @@
                     new ApexCharts(document.querySelector("#topFoodsChart"), options).render();
                 });
         });
-
-        // var options = {
-        //     chart: {
-        //         type: 'line'
-        //     },
-        //     series: [{
-        //         name: 'sales',
-        //         data: [30, 40, 35, 50, 49, 60, 70, 91, 125]
-        //     }],
-        //     xaxis: {
-        //         categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999]
-        //     }
-        // }
-
-        // var chart = new ApexCharts(document.querySelector("#dietChart"), options);
-
-        // chart.render();
     </script>
-
 
     @endpush
 </x-app-layout>

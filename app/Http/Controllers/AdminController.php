@@ -87,53 +87,6 @@ class AdminController extends Controller
         ));
     }
 
-    // public function chartData(Request $request)
-    // {
-    //     $type = $request->query('type');
-
-    //     switch ($type) {
-    //         case 'user':
-    //             $tanggal7Hari = collect(range(0, 6))->map(function ($daysAgo) {
-    //                 return \Carbon\Carbon::today()->subDays($daysAgo)->format('Y-m-d');
-    //             })->reverse();
-
-    //             $userLabels = $tanggal7Hari->map(function ($tanggal) {
-    //                 return \Carbon\Carbon::parse($tanggal)->format('d M');
-    //             });
-
-    //             $userData = $tanggal7Hari->map(function ($tanggal) {
-    //                 return \App\Models\User::whereDate('created_at', $tanggal)->count();
-    //             });
-
-    //             return response()->json([
-    //                 'labels' => $userLabels,
-    //                 'data' => $userData
-    //             ]);
-
-    //         case 'diet':
-    //             $dietCounts = \App\Models\MakananModel::select('tipe_diet')
-    //                 ->whereNotNull('tipe_diet')
-    //                 ->groupBy('tipe_diet')
-    //                 ->selectRaw('tipe_diet, COUNT(*) as jumlah')
-    //                 ->get();
-
-    //             return response()->json([
-    //                 'labels' => $dietCounts->pluck('tipe_diet'),
-    //                 'data' => $dietCounts->pluck('jumlah'),
-    //             ]);
-
-    //         case 'top_foods':
-    //             $topFoods = \App\Models\MakananModel::orderByDesc('favorit')->take(5)->get();
-
-    //             return response()->json([
-    //                 'labels' => $topFoods->pluck('nama_makanan'),
-    //                 'data' => $topFoods->pluck('favorit'),
-    //             ]);
-
-    //         default:
-    //             return response()->json(['error' => 'Invalid type'], 400);
-    //     }
-    // }
 
     public function chartData(Request $request)
     {
@@ -141,17 +94,31 @@ class AdminController extends Controller
 
         switch ($type) {
             case 'user':
-                $tanggal7Hari = collect(range(0, 6))->map(function ($daysAgo) {
-                    return Carbon::today()->subDays($daysAgo)->format('Y-m-d');
-                })->reverse();
+                $tz = config('app.timezone') ?: 'Asia/Jakarta';
 
-                $userLabels = $tanggal7Hari->map(fn($tanggal) => Carbon::parse($tanggal)->format('d M'))->toArray();
-                $userData = $tanggal7Hari->map(fn($tanggal) => (int) User::whereDate('created_at', $tanggal)->count())->toArray();
+                // siapkan 7 hari terakhir di TZ aplikasi, lalu balik urutan biar paling lama ke terbaru
+                $hari = collect(range(0, 6))
+                    ->map(fn($i) => Carbon::now($tz)->subDays($i)->startOfDay())
+                    ->reverse()
+                    ->values();
+
+                $labels = $hari->map(fn($d) => $d->format('d M'))->toArray();
+
+                $data = $hari->map(function ($start) use ($tz) {
+                    $end = $start->copy()->endOfDay();
+
+                    // konversi ke UTC (asumsi timestamp DB disimpan UTC — default Laravel)
+                    $startUtc = $start->copy()->timezone('UTC');
+                    $endUtc   = $end->copy()->timezone('UTC');
+
+                    return (int) User::whereBetween('created_at', [$startUtc, $endUtc])->count();
+                })->toArray();
 
                 return response()->json([
-                    'labels' => $userLabels,
-                    'data' => $userData
+                    'labels' => $labels,
+                    'data'   => $data,
                 ]);
+
 
             case 'diet':
                 $dietCounts = MakananModel::whereNotNull('tipe_diet')
@@ -238,10 +205,40 @@ class AdminController extends Controller
     /**
      * Tampilkan data semua pengguna non-admin.
      */
-    public function dataPengguna()
+    public function dataPengguna(Request $request)
     {
-        $users = User::where('role', '!=', 'admin')->get();
-        return view('auth.datapengguna', compact('users'));
+        // $users = User::where('role', '!=', 'admin')->get();
+        // $role = $request->query('role', 'all'); // all|user|admin
+
+        // $users = User::when($role !== 'all', fn($q) => $q->where('role', $role))
+        //     ->latest()
+        //     ->paginate(10)
+        //     ->withQueryString();
+
+        $search = trim($request->get('search', ''));
+        $role   = $request->get('role', 'all'); // '' | 'user' | 'admin'
+
+        $query = \App\Models\User::query();
+
+        // Filter pencarian
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                    ->orWhere('email', 'LIKE', "%{$search}%")
+                    ->orWhere('role', 'LIKE', "%{$search}%");
+            });
+        }
+
+        // Filter role (jika dipilih)
+        if ($role !== 'all') {
+            $query->where('role', $role);
+        }
+
+        $users = $query->orderByDesc('created_at')
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('profile.datapengguna', compact('users'));
     }
 
     /**
@@ -250,7 +247,7 @@ class AdminController extends Controller
     public function editPengguna($id)
     {
         $user = User::findOrFail($id);
-        return view('auth.editpengguna', compact('user'));
+        return view('profile.editpengguna', compact('user'));
     }
 
     /**
