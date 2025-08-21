@@ -53,7 +53,7 @@
                     <option value="Keto" {{ old('tipe_diet', $makanan->tipe_diet) == 'Keto' ? 'selected' : '' }}>Keto</option>
                     <option value="Vegetarian" {{ old('tipe_diet', $makanan->tipe_diet) == 'Vegetarian' ? 'selected' : '' }}>Vegetarian</option>
                     <option value="Vegan" {{ old('tipe_diet', $makanan->tipe_diet) == 'Vegan' ? 'selected' : '' }}>Vegan</option>
-                    <option value="Anything" {{ old('tipe_diet', $makanan->tipe_diet) == 'Normal' ? 'selected' : '' }}>Normal</option>
+                    <option value="Normal" {{ old('tipe_diet', $makanan->tipe_diet) == 'Normal' ? 'selected' : '' }}>Normal</option>
                 </select>
             </div>
 
