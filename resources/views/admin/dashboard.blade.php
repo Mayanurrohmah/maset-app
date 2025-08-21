@@ -49,8 +49,9 @@
         {{-- Menu Akses Cepat --}}
         <div class="bg-white p-4 rounded-2xl shadow-xl">
             <div class="flex flex-wrap justify-center items-center gap-4">
-                <a href="{{ route('makanan.rekomendasi_makanan') }}" class="flex-grow sm:flex-grow-0 bg-lime-600 text-white text-center font-bold py-3 px-6 rounded-lg hover:bg-lime-700 transition">Kelola Makanan</a>
-                <a href="{{ route('auth.user_pengguna') }}" class="flex-grow sm:flex-grow-0 bg-blue-600 text-white text-center font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition">Kelola Pengguna</a>
+                <a href="{{ route('makanan.dashboard') }}" class="flex-grow sm:flex-grow-0 bg-red-600 text-white text-center font-bold py-3 px-6 rounded-lg hover:bg-red-700 transition">Dashboard</a>
+                <a href="{{ route('makanan.rekomendasi_makanan') }}" class="flex-grow sm:flex-grow-0 bg-blue-600 text-white text-center font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition">Rekomendasi Makanan</a>
+                <a href="{{ route('makanan.kelola_makanan') }}" class="flex-grow sm:flex-grow-0 bg-lime-600 text-white text-center font-bold py-3 px-6 rounded-lg hover:bg-lime-700 transition">Kelola Makanan</a>
                 <a href="{{ route('auth.user_pengguna') }}" class="flex-grow sm:flex-grow-0 bg-gray-700 text-white text-center font-bold py-3 px-6 rounded-lg hover:bg-gray-800 transition">Data Pengguna</a>
                 <a href="{{ route('makanan.favorit') }}" class="flex-grow sm:flex-grow-0 bg-indigo-600 text-white text-center font-bold py-3 px-6 rounded-lg hover:bg-indigo-700 transition">Makanan Favorit</a>
             </div>
@@ -90,7 +91,7 @@
                                 <p class="font-semibold text-gray-800">{{ $user->name }}</p>
                                 <p class="text-sm text-gray-500">{{ $user->email }}</p>
                             </div>
-                            <a href="#" class="text-sm text-blue-600 hover:underline">Detail</a>
+                            <!-- <a href="#" class="text-sm text-blue-600 hover:underline">Detail</a> -->
                         </li>
                         @empty
                         <li>
