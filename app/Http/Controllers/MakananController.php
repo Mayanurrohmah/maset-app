@@ -237,6 +237,51 @@ class MakananController extends Controller
     }
 
 
+    // public function getRekomendasi(Request $request)
+    // {
+    //     AktivitasHelper::catat("Memulai rekomendasi dengan diet: {$request->diet}");
+
+    //     $validated = $request->validate([
+    //         'budget' => 'required|numeric',
+    //         'diet'   => 'required|string',
+    //     ]);
+
+    //     // 1. Panggil API untuk mendapatkan cluster pengguna
+    //     $response = Http::post('http://127.0.0.1:5000/get-user-cluster', [
+    //         'budget'    => (int) $validated['budget'],
+    //         'tipe_diet' => $validated['diet'],
+    //     ]);
+
+    //     if (!$response->successful()) {
+    //         return response()->json(['error' => 'Gagal mendapatkan cluster rekomendasi dari API.'], 500);
+    //     }
+
+    //     $cluster = $response->json()['cluster'];
+    //     $budget = (int) $validated['budget'];
+    //     $diet = $validated['diet'];
+
+    //     // 2. Query database dengan menyertakan data favorit
+    //     $rekomendasi = MakananModel::withCount('favorits') // Hitung jumlah favorit
+    //         // ->where('cluster', $cluster)
+    //         ->where('harga', '<=', $budget)
+    //         ->where('tipe_diet', $diet)
+    //         ->inRandomOrder()
+    //         ->limit(10)
+    //         ->get();
+
+    //     // 3. Tambahkan status favorit untuk user yang sedang login
+    //     if (Auth::check()) {
+    //         $favoritedIds = Auth::user()->favoritMakanan()->pluck('makanan.id')->toArray();
+    //         $rekomendasi->transform(function ($makanan) use ($favoritedIds) {
+    //             $makanan->is_favorited = in_array($makanan->id, $favoritedIds);
+    //             return $makanan;
+    //         });
+    //     }
+
+    //     // 4. Kembalikan hasilnya sebagai JSON
+    //     return response()->json($rekomendasi);
+    // }
+
     public function getRekomendasi(Request $request)
     {
         AktivitasHelper::catat("Memulai rekomendasi dengan diet: {$request->diet}");
@@ -244,32 +289,55 @@ class MakananController extends Controller
         $validated = $request->validate([
             'budget' => 'required|numeric',
             'diet'   => 'required|string',
+            'limit'  => 'nullable|integer|min:1|max:50',
         ]);
 
-        // 1. Panggil API untuk mendapatkan cluster pengguna
+        // --- Tanpa normalisasi input ---
+        $budget = (int) $validated['budget'];
+        $diet   = $validated['diet'];
+        $N      = $validated['limit'] ?? 10;
+
+        // 1) Dapatkan cluster user dari API
         $response = Http::post('http://127.0.0.1:5000/get-user-cluster', [
-            'budget'    => (int) $validated['budget'],
-            'tipe_diet' => $validated['diet'],
+            'budget'    => $budget,
+            'tipe_diet' => $diet,
         ]);
 
         if (!$response->successful()) {
             return response()->json(['error' => 'Gagal mendapatkan cluster rekomendasi dari API.'], 500);
         }
+        $cluster = (int) data_get($response->json(), 'cluster');
 
-        $cluster = $response->json()['cluster'];
-        $budget = (int) $validated['budget'];
-        $diet = $validated['diet'];
+        // Hitung kuota in-cluster (~70% dari N, minimal 7, maksimal N)
+        $primaryLimit = max(7, (int) floor($N * 0.7));
+        if ($primaryLimit > $N) $primaryLimit = $N;
 
-        // 2. Query database dengan menyertakan data favorit
-        $rekomendasi = MakananModel::withCount('favorits') // Hitung jumlah favorit
+        // ===========================
+        // Opsi A: harga kolom numeric
+        // ===========================
+        $inCluster = MakananModel::withCount('favorits')
             ->where('cluster', $cluster)
-            ->where('harga', '<=', $budget)
             ->where('tipe_diet', $diet)
+            ->where('harga', '<=', $budget)
             ->inRandomOrder()
-            ->limit(10)
+            ->limit($primaryLimit)
             ->get();
 
-        // 3. Tambahkan status favorit untuk user yang sedang login
+        $need = $N - $inCluster->count();
+        $outCluster = collect();
+        if ($need > 0) {
+            $outCluster = MakananModel::withCount('favorits')
+                ->where('cluster', '!=', $cluster)
+                ->where('tipe_diet', $diet)
+                ->where('harga', '<=', $budget)
+                ->inRandomOrder()
+                ->limit($need)
+                ->get();
+        }
+
+        $rekomendasi = $inCluster->concat($outCluster);
+
+        // 3) Tandai favorit (jika login)
         if (Auth::check()) {
             $favoritedIds = Auth::user()->favoritMakanan()->pluck('makanan.id')->toArray();
             $rekomendasi->transform(function ($makanan) use ($favoritedIds) {
@@ -278,9 +346,22 @@ class MakananController extends Controller
             });
         }
 
-        // 4. Kembalikan hasilnya sebagai JSON
-        return response()->json($rekomendasi);
+        // 4) Response
+        return response()->json([
+            'meta' => [
+                'cluster' => $cluster,
+                'diet'    => $diet,
+                'budget'  => $budget,
+                'count'   => $rekomendasi->count(),
+                'limit'   => $N,
+            ],
+            'items' => $rekomendasi->values(),
+        ]);
+        // return response()->json($rekomendasi->values());
+
     }
+
+
 
     public function showImportForm()
     {
